@@ -6,6 +6,7 @@ import { runDoctorChecks } from "@/commands/doctor/lib/runner.ts";
 function createDoctorContext(offline = false): DoctorCheckContext {
   return {
     offline,
+    interactive: false,
     execution: {
       profile: "test",
       cli: { debug: false, json: true, agent: false },
@@ -46,7 +47,10 @@ describe("runDoctorChecks", () => {
         run() {
           throw new ConfigurationError("Missing.");
         },
-        remediation: () => ["Configure it."],
+        remediation: (context) => {
+          expect(context.execution.profile).toBe("test");
+          return ["Configure it."];
+        },
       },
       {
         id: "dependent",
